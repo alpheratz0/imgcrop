@@ -221,7 +221,7 @@ image_crop(struct image *image, const char *geometry)
 static void
 usage(void)
 {
-	puts("usage: pngcrop [-hv] [geometry] [inpath] [outpath]");
+	puts("usage: pngcrop [-hv] [-i input] [-o output] [geometry]");
 	exit(0);
 }
 
@@ -245,13 +245,14 @@ main(int argc, char **argv)
 			switch ((*argv)[1]) {
 				case 'h': usage(); break;
 				case 'v': version(); break;
+				case 'i': --argc; inpath = *++argv; break;
+				case 'o': --argc; outpath = *++argv; break;
 				default: die("invalid option %s", *argv); break;
 			}
 		} else {
-			if (NULL == geometry) geometry = *argv;
-			else if (NULL == inpath) inpath = *argv;
-			else if (NULL == outpath) outpath = *argv;
-			else die("unexpected argument: %s", *argv);
+			if (NULL != geometry)
+				die("unexpected argument: %s", *argv);
+			geometry = *argv;
 		}
 	}
 
