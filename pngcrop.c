@@ -221,7 +221,7 @@ image_crop(struct image *image, const char *geometry)
 static void
 usage(void)
 {
-	puts("usage: pngcrop [-hv] [geometry] [loadpath] [savepath]");
+	puts("usage: pngcrop [-hv] [geometry] [inpath] [outpath]");
 	exit(0);
 }
 
@@ -235,10 +235,10 @@ version(void)
 int
 main(int argc, char **argv)
 {
-	const char *geometry, *loadpath, *savepath;
+	const char *geometry, *inpath, *outpath;
 	struct image image = { 0 };
 
-	geometry = loadpath = savepath = NULL;
+	geometry = inpath = outpath = NULL;
 
 	while (++argv, --argc > 0) {
 		if ((*argv)[0] == '-' && (*argv)[1] != '\0' && (*argv)[2] == '\0') {
@@ -249,8 +249,8 @@ main(int argc, char **argv)
 			}
 		} else {
 			if (NULL == geometry) geometry = *argv;
-			else if (NULL == loadpath) loadpath = *argv;
-			else if (NULL == savepath) savepath = *argv;
+			else if (NULL == inpath) inpath = *argv;
+			else if (NULL == outpath) outpath = *argv;
 			else die("unexpected argument: %s", *argv);
 		}
 	}
@@ -258,15 +258,12 @@ main(int argc, char **argv)
 	if (NULL == geometry)
 		die("geometry argument is required");
 
-	if (NULL == loadpath)
-		die("loadpath argument is required");
+	if (NULL == inpath || NULL == outpath)
+		die("you must specify an input and output path");
 
-	if (NULL == savepath)
-		die("savepath argument is required");
-
-	image_load(loadpath, &image);
+	image_load(inpath, &image);
 	image_crop(&image, geometry);
-	image_save(savepath, &image);
+	image_save(outpath, &image);
 
 	return 0;
 }
