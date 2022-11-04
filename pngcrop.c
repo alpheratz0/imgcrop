@@ -108,6 +108,9 @@ image_load(const char *path, struct image *image)
 			png_set_filler(png, 0xff, PNG_FILLER_AFTER);
 			png_set_gray_to_rgb(png);
 			break;
+		case PNG_COLOR_TYPE_GRAY_ALPHA:
+			png_set_gray_to_rgb(png);
+			break;
 	}
 
 	png_read_update_info(png, pnginfo);
@@ -121,9 +124,11 @@ image_load(const char *path, struct image *image)
 
 	for (y = 0; y < image->height; ++y) {
 		for (x = 0; x < image->width; ++x) {
-			image->px[y*image->width+x] = rows[y][x*4+0] << 16 |
-				rows[y][x*4+1] << 8 |
-				rows[y][x*4+2];
+			if (rows[y][x*4+3] == 0)
+				image->px[y*image->width+x] = 0xffffff;
+			else image->px[y*image->width+x] = rows[y][x*4+0] << 16 |
+					rows[y][x*4+1] << 8 |
+					rows[y][x*4+2];
 		}
 		png_free(png, rows[y]);
 	}
