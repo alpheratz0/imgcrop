@@ -204,10 +204,10 @@ image_crop(struct image *image, const char *geometry)
 	if (parsed_geometry.y < 0 || parsed_geometry.y >= image->height)
 		die("invalid Y coord");
 
-	if (parsed_geometry.width <= 0 || parsed_geometry.x + parsed_geometry.width >= image->width)
+	if (parsed_geometry.width <= 0 || parsed_geometry.x + parsed_geometry.width > image->width)
 		die("invalid width");
 
-	if (parsed_geometry.height <= 0 || parsed_geometry.y + parsed_geometry.height >= image->height)
+	if (parsed_geometry.height <= 0 || parsed_geometry.y + parsed_geometry.height > image->height)
 		die("invalid height");
 
 	npx = malloc(sizeof(uint32_t) * parsed_geometry.width * parsed_geometry.height);
