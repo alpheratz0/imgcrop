@@ -189,6 +189,7 @@ image_save(const char *path, struct image *image)
 	png_free(png, row);
 	png_write_end(png, NULL);
 	png_free_data(png, pnginfo, PNG_FREE_ALL, -1);
+	png_destroy_info_struct(png, &pnginfo);
 	png_destroy_write_struct(&png, NULL);
 	fclose(fp);
 }
