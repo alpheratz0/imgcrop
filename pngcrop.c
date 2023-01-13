@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2022 <alpheratz99@protonmail.com>
+	Copyright (C) 2022-2023 <alpheratz99@protonmail.com>
 
 	This program is free software; you can redistribute it and/or modify it under
 	the terms of the GNU General Public License version 2 as published by the
@@ -124,11 +124,14 @@ image_load(const char *path, struct image *image)
 
 	for (y = 0; y < image->height; ++y) {
 		for (x = 0; x < image->width; ++x) {
-			if (rows[y][x*4+3] == 0)
-				image->px[y*image->width+x] = 0xffffff;
-			else image->px[y*image->width+x] = rows[y][x*4+0] << 16 |
-					rows[y][x*4+1] << 8 |
-					rows[y][x*4+2];
+			if (rows[y][x * 4 + 3] == 0) {
+				image->px[y * image->width + x] = 0xffffff;
+			} else {
+				image->px[y * image->width + x] =
+					rows[y][x * 4 + 0] << 16 |
+					rows[y][x * 4 + 1] <<  8 |
+					rows[y][x * 4 + 2] <<  0;
+			}
 		}
 		png_free(png, rows[y]);
 	}
@@ -176,9 +179,9 @@ image_save(const char *path, struct image *image)
 
 	for (y = 0; y < image->height; ++y) {
 		for (x = 0; x < image->width; ++x) {
-			row[x*3+0] = (image->px[y*image->width+x] >> 16) & 0xff;
-			row[x*3+1] = (image->px[y*image->width+x] >> 8) & 0xff;
-			row[x*3+2] = image->px[y*image->width+x] & 0xff;
+			row[x * 3 + 0] = (image->px[y * image->width + x] >> 16) & 0xff;
+			row[x * 3 + 1] = (image->px[y * image->width + x] >>  8) & 0xff;
+			row[x * 3 + 2] = (image->px[y * image->width + x] >>  0) & 0xff;
 		}
 		png_write_row(png, row);
 	}
@@ -195,33 +198,30 @@ image_crop(struct image *image, const char *geometry)
 {
 	int x, y;
 	uint32_t *npx;
-	struct geometry parsed_geometry;
+	struct geometry g;
 
-	geometry_parse(geometry, &parsed_geometry);
+	geometry_parse(geometry, &g);
 
-	if (parsed_geometry.x < 0 || parsed_geometry.x >= image->width)
+	if (g.x < 0 || g.x >= image->width)
 		die("invalid X coord");
-
-	if (parsed_geometry.y < 0 || parsed_geometry.y >= image->height)
+	if (g.y < 0 || g.y >= image->height)
 		die("invalid Y coord");
-
-	if (parsed_geometry.width <= 0 || parsed_geometry.x + parsed_geometry.width > image->width)
+	if (g.width <= 0 || g.x + g.width > image->width)
 		die("invalid width");
-
-	if (parsed_geometry.height <= 0 || parsed_geometry.y + parsed_geometry.height > image->height)
+	if (g.height <= 0 || g.y + g.height > image->height)
 		die("invalid height");
 
-	npx = malloc(sizeof(uint32_t) * parsed_geometry.width * parsed_geometry.height);
+	npx = malloc(sizeof(uint32_t) * g.width * g.height);
 
-	for (y = 0; y < parsed_geometry.height; ++y)
-		for (x = 0; x < parsed_geometry.width; ++x)
-			npx[y*parsed_geometry.width+x] =
-				image->px[(parsed_geometry.y+y)*image->width+parsed_geometry.x+x];
+	for (y = 0; y < g.height; ++y)
+		for (x = 0; x < g.width; ++x)
+			npx[y*g.width+x] =
+				image->px[(g.y + y) * image->width + g.x + x];
 
 	free(image->px);
 	image->px = npx;
-	image->width = parsed_geometry.width;
-	image->height = parsed_geometry.height;
+	image->width = g.width;
+	image->height = g.height;
 }
 
 static void
