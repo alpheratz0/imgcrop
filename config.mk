@@ -4,7 +4,7 @@
 VERSION=0.1.1
 CC=cc
 CFLAGS=-std=c99 -pedantic -Wall -Wextra -Os -DVERSION=\"$(VERSION)\"
-LDLIBS=-lpng
+LDLIBS=-lm
 LDFLAGS=-s
 PREFIX=/usr/local
 MANPREFIX=$(PREFIX)/share/man
