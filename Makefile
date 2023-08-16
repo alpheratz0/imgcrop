@@ -22,7 +22,7 @@ install: all
 dist: clean
 	mkdir -p imgcrop-$(VERSION)
 	cp -R COPYING config.mk Makefile README imgcrop.1 imgcrop.c \
-		image.c image.h geometry.c geometry.h stb imgcrop-$(VERSION)
+		image.c image.h geometry.c geometry.h vendor imgcrop-$(VERSION)
 	tar -cf imgcrop-$(VERSION).tar imgcrop-$(VERSION)
 	gzip imgcrop-$(VERSION).tar
 	rm -rf imgcrop-$(VERSION)
