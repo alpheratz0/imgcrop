@@ -6,7 +6,7 @@ include config.mk
 all: imgcrop
 
 imgcrop: imgcrop.o image.o geometry.o
-	$(CC) $(LDFLAGS) -o imgcrop imgcrop.o image.o geometry.o $(LDLIBS)
+	$(CC) $(LDFLAGS) -o imgcrop imgcrop.o image.o geometry.o
 
 clean:
 	rm -f imgcrop *.o imgcrop-$(VERSION).tar.gz
